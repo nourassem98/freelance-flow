@@ -9,48 +9,6 @@ import PricingSection4 from '../../../components/ui/pricing-section-4';
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Navigation */}
-      <motion.nav 
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="border-b border-gray-800/30 bg-black/80 backdrop-blur-xl sticky top-0 z-50"
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center">
-                <Image
-                  src="/logo.png"
-                  alt="Freelance Flow Logo"
-                  width={32}
-                  height={32}
-                  className="object-contain mr-2"
-                />
-                <span className="text-xl font-bold text-white">Freelance Flow</span>
-              </Link>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                Home
-              </Link>
-              <Link href="/sign-in">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                    className="rounded-lg bg-gradient-to-r from-gray-600 to-gray-800 px-4 py-2 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl border border-gray-500"
-                >
-                  Log In
-                </motion.button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </motion.nav>
-
       {/* New Pricing Section */}
       <PricingSection4 />
 

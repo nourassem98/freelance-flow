@@ -3,10 +3,9 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { SignInButton } from '@clerk/nextjs';
+import { SignInButton, useClerk } from '@clerk/nextjs';
 import Link from 'next/link';
 import { ArrowRight, Users, Layers, CreditCard, Shield, Sparkles, Globe, Zap, Lock } from 'lucide-react';
-import Navbar from '@/components/Navbar';
 import { ContainerScroll } from '../../components/ui/container-scroll-animation';
 import { SplineScene } from '../../components/ui/splite';
 import { Spotlight } from '../../components/ui/spotlight';
@@ -14,13 +13,19 @@ import { Card } from '../../components/ui/card';
 import { AnimatedBeamDemo } from './animated-beam-demo/page';
 import { FeaturesSectionWithHoverEffects } from '../../components/blocks/feature-section-with-hover-effects';
 import Testimonials from '../../components/ui/testimonials-columns-1';
+import AnimatedGenerateButton from '../../components/ui/animated-generate-button-shadcn-tailwind';
 
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
+  const { openSignIn } = useClerk();
   
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  const handleSignIn = () => {
+    openSignIn();
+  };
 
   const featureCards = [
     {
@@ -81,9 +86,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* New Professional Navbar */}
-      <Navbar />
-
       {/* Hero Section - Full Width */}
       <main className="w-full">
         {/* Full-width 3D Robot Section */}
@@ -111,15 +113,14 @@ export default function Home() {
                 Powered by AI assistance to help you streamline your freelance workflow and boost productivity.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="rounded-lg bg-gradient-to-r from-gray-600 to-gray-800 px-8 py-3 text-lg font-medium text-white shadow-lg transition-all hover:shadow-xl border border-gray-500"
-                  >
-                    Get Started Free
-                  </motion.button>
-                </SignInButton>
+                <AnimatedGenerateButton
+                  labelIdle="Get Started"
+                  labelActive="Starting..."
+                  highlightHueDeg={210}
+                  className="rounded-lg"
+                  onClick={handleSignIn}
+                  delay={1000}
+                />
                 <Link href="/pricing">
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
@@ -267,15 +268,14 @@ export default function Home() {
             Join thousands of freelancers who use Freelance Flow to manage their business more efficiently
           </p>
           <div className="mt-8">
-            <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                    className="rounded-lg bg-white px-8 py-3 text-lg font-medium text-black shadow-lg transition-all hover:bg-gray-200 hover:shadow-xl"
-              >
-                Start Free Trial
-              </motion.button>
-            </SignInButton>
+            <AnimatedGenerateButton
+              labelIdle="Start Free Trial"
+              labelActive="Starting..."
+              highlightHueDeg={120}
+              className="rounded-lg"
+              onClick={handleSignIn}
+              delay={1000}
+            />
           </div>
         </motion.div>
       </main>

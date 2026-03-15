@@ -242,7 +242,7 @@ export default function PricingSection4() {
         }}
       />
 
-      <div className="grid md:grid-cols-3 max-w-5xl gap-4 py-6 mx-auto px-4">
+      <div className="grid md:grid-cols-3 max-w-5xl gap-8 py-6 mx-auto px-4">
         {plans.map((plan, index) => (
           <TimelineContent
             key={plan.name}
@@ -252,49 +252,61 @@ export default function PricingSection4() {
             customVariants={revealVariants}
           >
             <Card
-              className={`relative text-white border-gray-800 transition-all duration-300 hover:scale-105 hover:border-gray-500 ${
+              className={`glow-card relative text-gray-800 border-gray-400 ${
                 plan.popular
-                  ? "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-[0px_0px_30px_0px_#333333] hover:shadow-[0px_0px_50px_0px_#666666] z-20"
-                  : "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 shadow-[0px_0px_20px_0px_#333333] hover:shadow-[0px_0px_50px_0px_#666666] z-10"
+                  ? "bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 z-20"
+                  : "bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 z-10"
               }`}
+              style={{
+                backgroundImage: `
+                  linear-gradient(135deg, #e5e7eb 0%, #d1d5db 25%, #9ca3af 50%, #d1d5db 75%, #e5e7eb 100%),
+                  repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255,255,255,0.1) 2px,
+                    rgba(255,255,255,0.1) 4px
+                  )
+                `,
+              }}
             >
               <CardHeader className="text-left">
                 <div className="flex justify-between">
-                  <h3 className="text-3xl mb-2">{plan.name}</h3>
+                  <h3 className="text-3xl font-bold mb-2 text-gray-900">{plan.name}</h3>
                 </div>
                 <div className="flex items-baseline">
-                  <span className="text-4xl font-semibold">
+                  <span className="text-4xl font-bold text-gray-900">
                     $
                     <NumberFlow
                       format={{
                         currency: "USD",
                       }}
                       value={isYearly ? plan.yearlyPrice : plan.price}
-                      className="text-4xl font-semibold"
+                      className="text-4xl font-bold text-gray-900"
                     />
                   </span>
-                  <span className="text-gray-300 ml-1">
+                  <span className="text-gray-700 ml-1 font-medium">
                     /{isYearly ? "year" : "month"}
                   </span>
                 </div>
-                <p className="text-sm text-gray-300 mb-4">{plan.description}</p>
+                <p className="text-sm text-gray-700 mb-4 font-medium">{plan.description}</p>
               </CardHeader>
 
               <CardContent className="pt-0">
                 <button
                   className={`w-full mb-6 p-4 text-xl rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 ${
                     plan.popular
-                      ? "bg-gradient-to-t from-gray-600 to-gray-800 shadow-lg shadow-gray-900 border border-gray-500 text-white hover:from-gray-500 hover:to-gray-700"
+                      ? "bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 shadow-lg shadow-gray-400 border border-gray-500 text-white hover:from-gray-400 hover:via-gray-500 hover:to-gray-600"
                       : plan.buttonVariant === "outline"
-                        ? "bg-gradient-to-t from-gray-950 to-gray-700 shadow-lg shadow-gray-900 border border-gray-700 text-white hover:from-gray-900 hover:to-gray-600"
+                        ? "bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 shadow-lg shadow-gray-300 border border-gray-400 text-gray-800 hover:from-gray-200 hover:via-gray-300 hover:to-gray-400"
                         : ""
                   }`}
                 >
                   {plan.buttonText}
                 </button>
 
-                <div className="space-y-3 pt-4 border-t border-gray-700">
-                  <h4 className="font-medium text-base mb-3">
+                <div className="space-y-3 pt-4 border-t border-gray-400">
+                  <h4 className="font-bold text-base mb-3 text-gray-900">
                     {plan.includes[0]}
                   </h4>
                   <ul className="space-y-2">
@@ -303,8 +315,8 @@ export default function PricingSection4() {
                         key={featureIndex}
                         className="flex items-center gap-2"
                       >
-                        <span className="h-2.5 w-2.5 bg-gray-500 rounded-full grid place-content-center"></span>
-                        <span className="text-sm text-gray-300">{feature}</span>
+                        <span className="h-2.5 w-2.5 bg-gray-600 rounded-full grid place-content-center"></span>
+                        <span className="text-sm text-gray-800 font-medium">{feature}</span>
                       </li>
                     ))}
                   </ul>
