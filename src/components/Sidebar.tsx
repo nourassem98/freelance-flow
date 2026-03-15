@@ -7,7 +7,9 @@ import {
   FolderKanban, 
   FileText,
   Settings,
-  LogOut
+  LogOut,
+  Calendar,
+  Sparkles
 } from 'lucide-react';
 import { Show, SignInButton, UserButton, useUser } from '@clerk/nextjs';
 
@@ -16,10 +18,12 @@ const Sidebar = () => {
   const firstName = user?.firstName || '';
 
   const navItems = [
-    { icon: <LayoutDashboard size={20} />, label: 'Dashboard', active: true },
-    { icon: <Users size={20} />, label: 'Clients' },
-    { icon: <FolderKanban size={20} />, label: 'Projects' },
-    { icon: <FileText size={20} />, label: 'Invoices' },
+    { icon: <LayoutDashboard size={20} />, label: 'Dashboard', href: '/dashboard' },
+    { icon: <Users size={20} />, label: 'Clients', href: '#' },
+    { icon: <FolderKanban size={20} />, label: 'Projects', href: '#' },
+    { icon: <FileText size={20} />, label: 'Invoices', href: '#' },
+    { icon: <Calendar size={20} />, label: 'Calendar', href: '/dashboard/calendar' },
+    { icon: <Sparkles size={20} />, label: 'AI Agent', href: '/dashboard/ai-agent' },
   ];
 
   const bottomItems = [
@@ -42,12 +46,8 @@ const Sidebar = () => {
         {navItems.map((item) => (
           <a
             key={item.label}
-            href="#"
-            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
-              item.active
-                ? 'bg-gray-800 text-white'
-                : 'hover:bg-gray-800 hover:text-white'
-            }`}
+            href={item.href}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-gray-800 hover:text-white"
           >
             {item.icon}
             <span>{item.label}</span>

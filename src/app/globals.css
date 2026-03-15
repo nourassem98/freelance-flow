@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+@layer utilities {
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 5px rgba(22, 238, 62, 0.937),
+                   0 0 10px rgba(129, 140, 248, 0.3),
+                   0 0 15px rgba(129, 140, 248, 0.2);
+    }
+    to {
+      text-shadow: 0 0 10px rgba(23, 140, 248, 0.8),
+                   0 0 20px rgba(23, 140, 248, 0.6),
+                   0 0 30px rgba(19, 140, 248, 0.4);
+    }
+  }
+
+  .animate-spin-slow {
+    animation: spin 3s linear infinite;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
