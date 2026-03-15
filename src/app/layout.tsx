@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Freelance Flow | Personal CRM Dashboard",
   description: "A personal CRM dashboard for freelancers to manage clients, projects, and invoices",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

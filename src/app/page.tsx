@@ -6,7 +6,14 @@ import { motion } from 'framer-motion';
 import { SignInButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { ArrowRight, Users, Layers, CreditCard, Shield, Sparkles, Globe, Zap, Lock } from 'lucide-react';
-import Robot3D from '@/components/Robot3D';
+import Navbar from '@/components/Navbar';
+import { ContainerScroll } from '../../components/ui/container-scroll-animation';
+import { SplineScene } from '../../components/ui/splite';
+import { Spotlight } from '../../components/ui/spotlight';
+import { Card } from '../../components/ui/card';
+import { AnimatedBeamDemo } from './animated-beam-demo/page';
+import { FeaturesSectionWithHoverEffects } from '../../components/blocks/feature-section-with-hover-effects';
+import Testimonials from '../../components/ui/testimonials-columns-1';
 
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -73,101 +80,69 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white">
-      {/* Navigation - Clean & Minimal */}
-      <motion.nav 
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="border-b border-gray-800 bg-[#020617] sticky top-0 z-50"
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center">
-                <div className="relative h-8 w-8">
-                  <Image
-                    src="/FavIcon.png"
-                    alt="Freelance Flow Logo"
-                    width={32}
-                    height={32}
-                    className="rounded-lg"
-                  />
-                </div>
-                <span className="ml-3 text-xl font-bold text-white">Freelance Flow</span>
-              </Link>
+    <div className="min-h-screen bg-black text-white">
+      {/* New Professional Navbar */}
+      <Navbar />
+
+      {/* Hero Section - Full Width */}
+      <main className="w-full">
+        {/* Full-width 3D Robot Section */}
+        <motion.div
+          className="relative w-full h-[600px] bg-black overflow-hidden"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
+          <Spotlight
+            className="-top-40 left-0 md:left-60 md:-top-20"
+            fill="white"
+          />
+          
+          <div className="flex h-full">
+            {/* Left content - CRM and AI Text */}
+            <div className="flex-1 p-8 md:p-16 relative z-10 flex flex-col justify-center">
+                <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-300">
+                The CRM for Freelancers
+              </h1>
+                <p className="mt-4 text-gray-300 max-w-lg text-lg">
+                Manage clients, track projects, and handle invoices—all in one simple, beautiful interface.
+              </p>
+                <p className="mt-4 text-gray-400 max-w-lg">
+                Powered by AI assistance to help you streamline your freelance workflow and boost productivity.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="rounded-lg bg-gradient-to-r from-gray-600 to-gray-800 px-8 py-3 text-lg font-medium text-white shadow-lg transition-all hover:shadow-xl border border-gray-500"
+                  >
+                    Get Started Free
+                  </motion.button>
+                </SignInButton>
+                <Link href="/pricing">
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="rounded-lg border border-gray-600 bg-gray-900/50 px-8 py-3 text-lg font-medium text-gray-300 transition-all hover:bg-gray-800 hover:border-gray-500"
+                  >
+                    View Pricing
+                  </motion.button>
+                </Link>
+              </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/pricing"
-                className="text-gray-300 hover:text-white transition-colors text-sm"
-              >
-                Pricing
-              </Link>
-              <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl"
-                >
-                  Log In
-                </motion.button>
-              </SignInButton>
+
+            {/* Right content - 3D Robot */}
+            <div className="flex-1 relative">
+              <SplineScene 
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="w-full h-full"
+              />
             </div>
           </div>
-        </div>
-      </motion.nav>
+        </motion.div>
 
-      {/* Hero Section - Centered & Minimal */}
-      <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-          {/* Text Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center lg:text-left lg:w-1/2"
-          >
-            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
-              The CRM for Freelancers
-            </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300 lg:mx-0">
-              Manage clients, track projects, and handle invoices—all in one simple, beautiful interface.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-3 text-lg font-medium text-white shadow-lg transition-all hover:shadow-xl"
-                >
-                  Get Started Free
-                </motion.button>
-              </SignInButton>
-              <Link href="/pricing">
-                <motion.button 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="rounded-lg border border-gray-700 bg-white/5 px-8 py-3 text-lg font-medium text-gray-300 transition-all hover:bg-white/10 hover:border-gray-600"
-                >
-                  View Pricing
-                </motion.button>
-              </Link>
-            </div>
-          </motion.div>
-
-          {/* 3D Robot Mascot with Zero-Gravity Floating Animation */}
-          <motion.div
-            className="relative lg:w-1/2 flex justify-center items-center"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
-            <Robot3D />
-          </motion.div>
-        </div>
-
-        {/* Features Section - Clean Cards with Floating Effects */}
+        {/* Features Section - Hover Effects */}
         <div className="mt-24">
           <motion.div 
             className="text-center"
@@ -188,152 +163,107 @@ export default function Home() {
             </motion.p>
           </motion.div>
 
-          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {featureCards.map((card, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="relative rounded-2xl group overflow-hidden p-[1px] border border-gray-800 h-full"
-              >
-                {/* Magic Moving Border for the entire card */}
-                <div className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,#818cf8_50%,transparent_100%)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                
-                {/* Inner Card Content */}
-                <div className="relative rounded-2xl bg-[#020617] p-6 text-center backdrop-blur-sm h-full flex flex-col z-10">
-                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-600/20">
-                    {card.icon}
-                  </div>
-                  <h3 className="text-lg font-semibold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
-                    {card.title}
-                  </h3>
-                  <p className="mt-2 text-gray-400 flex-grow">
-                    {card.description}
-                  </p>
-                  
-                  {/* Learn More Button with Simple Hover Effect */}
-                  <div className="mt-6">
-                    <button className="inline-flex h-10 cursor-pointer items-center justify-center rounded-lg bg-slate-950 px-6 py-1 text-sm font-medium text-white transition-all hover:bg-slate-900 hover:scale-105 active:scale-95">
-                      Learn More
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <FeaturesSectionWithHoverEffects />
+          </motion.div>
         </div>
 
-        {/* Dashboard Preview with 3D Tilt Effect */}
-        <div className="mt-24">
-          <motion.div 
-            className="text-center mb-8"
-            whileInView={{ y: [40, -10, 0], opacity: [0, 1, 1] }}
-            viewport={{ once: false, margin: "-100px" }}
-            transition={{ duration: 2.5, ease: "easeOut", times: [0, 0.6, 1] }}
-          >
-            <h2 className="text-3xl font-bold text-white">Premium Dashboard Experience</h2>
-            <motion.p 
-              className="mx-auto mt-4 max-w-2xl text-gray-300"
-              whileInView={{ y: [40, -10, 0], opacity: [0, 1, 1] }}
-              viewport={{ once: false, margin: "-100px" }}
-              transition={{ duration: 2.5, ease: "easeOut", times: [0, 0.6, 1], delay: 0.2 }}
-            >
-              See your freelance business in a whole new light
-            </motion.p>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 30, rotateX: 10 }}
-            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative mx-auto max-w-4xl"
-          >
-            <div className="rounded-xl border border-gray-800 bg-white/5 overflow-hidden shadow-xl">
-              <div className="p-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="col-span-2">
-                    <div className="rounded-xl border border-gray-700 bg-white/5 p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-white">Revenue Overview</h3>
-                        <Globe className="h-5 w-5 text-indigo-400" />
-                      </div>
-                      <div className="h-48 rounded-lg bg-gradient-to-r from-indigo-500/10 to-purple-600/10"></div>
-                    </div>
+        {/* Premium Dashboard Experience with Scroll Animation */}
+        <ContainerScroll
+          titleComponent={
+            <div className="text-center">
+              <h2 className="text-4xl font-bold text-white mb-4">Premium Dashboard Experience</h2>
+              <p className="mx-auto max-w-2xl text-gray-300 text-lg">
+                See your freelance business in a whole new light with our intuitive dashboard
+              </p>
+            </div>
+          }
+        >
+          <div className="w-full h-full bg-gradient-to-br from-gray-900 via-gray-800 to-black rounded-2xl p-6 overflow-hidden">
+            {/* Dashboard Preview */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
+              {/* Revenue Chart */}
+              <div className="col-span-2 bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white">Revenue Overview</h3>
+                  <Globe className="h-5 w-5 text-gray-400" />
+                </div>
+                <div className="h-32 md:h-40 rounded-lg bg-gradient-to-r from-gray-500/20 to-gray-700/20 flex items-end">
+                  {/* Simulated chart bars */}
+                  <div className="flex items-end space-x-2 w-full h-full p-4">
+                    {[40, 65, 45, 80, 55, 70, 85].map((height, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 bg-gradient-to-t from-gray-500 to-gray-700 rounded-t-sm"
+                        style={{ height: `${height}%` }}
+                      />
+                    ))}
                   </div>
-                  <div className="space-y-6">
-                    <div className="rounded-xl border border-gray-700 bg-white/5 p-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-medium text-white">Active Projects</h4>
-                        <Zap className="h-4 w-4 text-green-400" />
-                      </div>
-                      <p className="mt-2 text-2xl font-bold text-white">12</p>
-                    </div>
-                    <div className="rounded-xl border border-gray-700 bg-white/5 p-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-medium text-white">Unpaid Invoices</h4>
-                        <CreditCard className="h-4 w-4 text-amber-400" />
-                      </div>
-                      <p className="mt-2 text-2xl font-bold text-white">$8,450</p>
-                    </div>
-                    <div className="rounded-xl border border-gray-700 bg-white/5 p-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-medium text-white">Security Status</h4>
-                        <Lock className="h-4 w-4 text-blue-400" />
-                      </div>
-                      <p className="mt-2 text-sm text-green-400">All Systems Secure</p>
-                    </div>
+                </div>
+              </div>
+              
+              {/* Stats Cards */}
+              <div className="space-y-4">
+                <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-medium text-white">Active Projects</h4>
+                    <Zap className="h-4 w-4 text-gray-400" />
                   </div>
+                  <p className="mt-2 text-2xl font-bold text-white">12</p>
+                </div>
+                <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-medium text-white">Unpaid Invoices</h4>
+                    <CreditCard className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <p className="mt-2 text-2xl font-bold text-white">$8,450</p>
+                </div>
+                <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-medium text-white">Security Status</h4>
+                    <Lock className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <p className="mt-2 text-sm text-gray-400">All Systems Secure</p>
                 </div>
               </div>
             </div>
-          </motion.div>
-        </div>
+          </div>
+        </ContainerScroll>
 
-        {/* Testimonials */}
+        {/* Animated Beam Demo Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
           className="mt-24"
         >
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-white">Trusted by Freelancers Worldwide</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-gray-300">
-              See what other freelancers are saying about Freelance Flow
+            <h2 className="text-3xl font-bold text-white mb-4">AI-Powered Integration</h2>
+            <p className="mx-auto max-w-2xl text-gray-300">
+              See how our AI connects all your freelance tools and services seamlessly
             </p>
           </div>
-
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="rounded-xl border border-gray-800 bg-white/5 p-6 shadow-lg backdrop-blur-sm"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600"></div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-semibold text-white">{testimonial.name}</h3>
-                    <p className="text-sm text-gray-400">{testimonial.role}</p>
-                  </div>
-                </div>
-                <p className="text-gray-300">{testimonial.quote}</p>
-              </div>
-            ))}
-          </div>
+          <AnimatedBeamDemo />
         </motion.div>
+
+        {/* Testimonials */}
+        <Testimonials />
 
         {/* Final CTA */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.7 }}
-          className="mt-24 rounded-xl border border-gray-800 bg-gradient-to-r from-indigo-500/10 to-purple-600/10 px-8 py-12 text-center shadow-xl backdrop-blur-md"
+          className="mt-24 rounded-xl border border-gray-700 bg-gradient-to-r from-gray-500/10 to-gray-700/10 px-8 py-12 text-center shadow-xl backdrop-blur-md"
         >
           <h2 className="text-3xl font-bold text-white">Ready to Streamline Your Workflow?</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-indigo-200">
+          <p className="mx-auto mt-4 max-w-2xl text-gray-300">
             Join thousands of freelancers who use Freelance Flow to manage their business more efficiently
           </p>
           <div className="mt-8">
@@ -341,7 +271,7 @@ export default function Home() {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="rounded-lg bg-white px-8 py-3 text-lg font-medium text-indigo-600 shadow-lg transition-all hover:bg-gray-100 hover:shadow-xl"
+                    className="rounded-lg bg-white px-8 py-3 text-lg font-medium text-black shadow-lg transition-all hover:bg-gray-200 hover:shadow-xl"
               >
                 Start Free Trial
               </motion.button>
@@ -355,16 +285,21 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.9 }}
-        className="mt-24 border-t border-gray-800 bg-[#020617] py-12"
+        className="mt-24 border-t border-gray-800 bg-black py-12"
       >
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
               <div className="flex items-center">
-                <div className="relative h-8 w-8">
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+                <div className="w-12 h-12 relative mr-2">
+                  <Image
+                    src="/logo.png"
+                    alt="Freelance Flow Logo"
+                    fill
+                    className="object-contain"
+                  />
                 </div>
-                <span className="ml-3 text-xl font-bold text-white">Freelance Flow</span>
+                <span className="text-xl font-bold text-white">Freelance Flow</span>
               </div>
               <p className="mt-2 text-gray-400">© 2026 Freelance Flow. All rights reserved.</p>
             </div>

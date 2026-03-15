@@ -11,6 +11,7 @@ import {
   Calendar,
   Sparkles
 } from 'lucide-react';
+import Image from 'next/image';
 import { Show, SignInButton, UserButton, useUser } from '@clerk/nextjs';
 
 const Sidebar = () => {
@@ -36,7 +37,14 @@ const Sidebar = () => {
       {/* Logo */}
       <div className="flex h-16 items-center justify-center border-b border-gray-800 px-4">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-indigo-600"></div>
+          <div className="w-12 h-12 relative">
+            <Image
+              src="/logo.png"
+              alt="Freelance Flow Logo"
+              fill
+              className="object-contain"
+            />
+          </div>
           <span className="text-xl font-bold text-white">Freelance Flow</span>
         </div>
       </div>

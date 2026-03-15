@@ -1,7 +1,10 @@
+"use client";
+
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import MetricCard from '@/components/MetricCard';
 import MonthlyRevenueTrend from '@/components/MonthlyRevenueTrend';
+import { AIVoiceInput } from '../../../components/ui/ai-voice-input';
 import { FolderKanban, FileText, Calendar } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -49,6 +52,22 @@ export default function DashboardPage() {
               icon={<Calendar size={24} />}
               color="emerald"
             />
+          </div>
+
+          {/* AI Voice Input Section */}
+          <div className="mt-8">
+            <div className="rounded-xl border border-gray-200 bg-white p-6">
+              <h2 className="text-lg font-semibold text-gray-900">AI Voice Assistant</h2>
+              <p className="mt-2 text-gray-600">
+                Click the microphone to start voice recording. The AI will extract invoices, projects, meetings, and deadlines from your speech.
+              </p>
+              <div className="mt-4">
+                <AIVoiceInput 
+                  onStart={() => console.log('Recording started')}
+                  onStop={(duration: number) => console.log(`Recording stopped. Duration: ${duration} seconds`)}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Additional content sections */}
