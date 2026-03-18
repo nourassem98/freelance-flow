@@ -7,6 +7,7 @@ import { cn } from "../../lib/utils";
 import NumberFlow from "@number-flow/react";
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
+import Link from "next/link";
 
 const plans = [
   {
@@ -191,7 +192,7 @@ export default function PricingSection4() {
         </div>
       </TimelineContent>
 
-      <article className="text-center mb-6 pt-32 max-w-3xl mx-auto space-y-2 relative z-50">
+      <article className="text-center mb-6 pt-32 max-w-3xl mx-auto space-y-2 relative z-10">
         <h2 className="text-4xl font-medium text-white">
           <VerticalCutReveal
             splitBy="words"
@@ -283,18 +284,27 @@ export default function PricingSection4() {
                       }}
                       value={isYearly ? plan.yearlyPrice : plan.price}
                       className="text-4xl font-bold text-gray-900"
+                      key={isYearly ? 'yearly' : 'monthly'}
+                      transformTiming={{ duration: 500, easing: "ease-out" }}
                     />
                   </span>
-                  <span className="text-gray-700 ml-1 font-medium">
+                  <motion.span 
+                    className="text-gray-700 ml-1 font-medium"
+                    key={isYearly ? 'yearly-unit' : 'monthly-unit'}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
                     /{isYearly ? "year" : "month"}
-                  </span>
+                  </motion.span>
                 </div>
                 <p className="text-sm text-gray-700 mb-4 font-medium">{plan.description}</p>
               </CardHeader>
 
               <CardContent className="pt-0">
-                <button
-                  className={`w-full mb-6 p-4 text-xl rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 ${
+                <Link
+                  href="/sign-in"
+                  className={`w-full mb-6 p-4 text-xl rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center ${
                     plan.popular
                       ? "bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 shadow-lg shadow-gray-400 border border-gray-500 text-white hover:from-gray-400 hover:via-gray-500 hover:to-gray-600"
                       : plan.buttonVariant === "outline"
@@ -303,7 +313,7 @@ export default function PricingSection4() {
                   }`}
                 >
                   {plan.buttonText}
-                </button>
+                </Link>
 
                 <div className="space-y-3 pt-4 border-t border-gray-400">
                   <h4 className="font-bold text-base mb-3 text-gray-900">

@@ -1,15 +1,88 @@
 'use client';
-
-import React from 'react';
+import React, { useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import Navbar from '@/components/Navbar';
+import { Sparkles } from '../../../components/ui/sparkles';
+import { TimelineContent } from '../../../components/ui/timeline-animation';
 
 export default function TermsPage() {
+  const pageRef = useRef<HTMLDivElement | null>(null);
+
+  const revealVariants = {
+    visible: (i: number) => ({
+      y: 0,
+      opacity: 1,
+      filter: "blur(0px)",
+      transition: {
+        delay: i * 0.4,
+        duration: 0.5,
+      },
+    }),
+    hidden: {
+      filter: "blur(10px)",
+      y: -20,
+      opacity: 0,
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-[#020617] text-white">
-      <Navbar />
+    <div className="min-h-screen bg-black text-white relative overflow-x-hidden" ref={pageRef}>
+      {/* Background Effects */}
+      <TimelineContent
+        animationNum={4}
+        timelineRef={pageRef}
+        customVariants={revealVariants}
+        className="absolute top-0 h-96 w-screen overflow-hidden z-0 [mask-image:radial-gradient(50%_50%,white,transparent)]"
+      >
+        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#ffffff2c_1px,transparent_1px),linear-gradient(to_bottom,#3a3a3a01_1px,transparent_1px)] bg-[size:70px_80px]"></div>
+        <Sparkles
+          density={1800}
+          speed={1}
+          color="#FFFFFF"
+          className="absolute inset-x-0 bottom-0 h-full w-full [mask-image:radial-gradient(50%_50%,white,transparent_85%)]"
+        />
+      </TimelineContent>
+      <TimelineContent
+        animationNum={5}
+        timelineRef={pageRef}
+        customVariants={revealVariants}
+        className="absolute left-0 top-[-114px] w-full h-[113.625vh] flex flex-col items-start justify-start content-start flex-none flex-nowrap gap-2.5 overflow-hidden p-0 z-0"
+      >
+        <div className="framer-1i5axl2">
+          <div
+            className="absolute left-[-568px] right-[-568px] top-0 h-[2053px] flex-none rounded-full"
+            style={{
+              border: "200px solid #333333",
+              filter: "blur(92px)",
+              WebkitFilter: "blur(92px)",
+            }}
+            data-border="true"
+            data-framer-name="Ellipse 1"
+          ></div>
+          <div
+            className="absolute left-[-568px] right-[-568px] top-0 h-[2053px] flex-none rounded-full"
+            style={{
+              border: "200px solid #333333",
+              filter: "blur(92px)",
+              WebkitFilter: "blur(92px)",
+            }}
+            data-border="true"
+            data-framer-name="Ellipse 2"
+          ></div>
+        </div>
+      </TimelineContent>
+
+      <div
+        className="absolute top-0 left-[10%] right-[10%] w-[80%] h-full z-0"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at center, #333333 0%, transparent 70%)
+          `,
+          opacity: 0.6,
+          mixBlendMode: "multiply",
+        }}
+      />
 
       <main className="mx-auto max-w-3xl px-6 py-32">
         <motion.div
@@ -137,20 +210,13 @@ export default function TermsPage() {
               </section>
             </div>
 
-            <div className="mt-12 pt-8 border-t border-gray-800">
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors"
-              >
-                ← Back to Home
-              </Link>
-            </div>
+          
           </div>
         </motion.div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-800 bg-[#020617] py-8">
+      <footer className="border-t border-gray-800 bg-black py-8">
         <div className="mx-auto max-w-7xl px-4 text-center text-gray-400">
           <div className="flex items-center justify-center mb-4">
             <div className="w-12 h-12 relative mr-2">

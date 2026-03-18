@@ -15,8 +15,6 @@ export default function DashboardPage() {
 
       {/* Main content */}
       <div className="flex-1">
-        <Header />
-
         <main className="p-6">
           {/* Welcome heading */}
           <div className="mb-8">

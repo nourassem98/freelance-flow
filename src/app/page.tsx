@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { SignInButton, useClerk } from '@clerk/nextjs';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowRight, Users, Layers, CreditCard, Shield, Sparkles, Globe, Zap, Lock } from 'lucide-react';
 import { ContainerScroll } from '../../components/ui/container-scroll-animation';
 import { SplineScene } from '../../components/ui/splite';
@@ -18,6 +19,7 @@ import AnimatedGenerateButton from '../../components/ui/animated-generate-button
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const { openSignIn } = useClerk();
+  const router = useRouter();
   
   useEffect(() => {
     setIsLoaded(true);
@@ -25,6 +27,10 @@ export default function Home() {
 
   const handleSignIn = () => {
     openSignIn();
+  };
+
+  const handleGetStarted = () => {
+    router.push('/pricing');
   };
 
   const featureCards = [
@@ -90,16 +96,11 @@ export default function Home() {
       <main className="w-full">
         {/* Full-width 3D Robot Section */}
         <motion.div
-          className="relative w-full h-[600px] bg-black overflow-hidden"
+          className="relative w-full h-[800px] bg-black overflow-hidden"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <Spotlight
-            className="-top-40 left-0 md:left-60 md:-top-20"
-            fill="white"
-          />
-          
           <div className="flex h-full">
             {/* Left content - CRM and AI Text */}
             <div className="flex-1 p-8 md:p-16 relative z-10 flex flex-col justify-center">
@@ -118,23 +119,20 @@ export default function Home() {
                   labelActive="Starting..."
                   highlightHueDeg={210}
                   className="rounded-lg"
-                  onClick={handleSignIn}
+                  onClick={handleGetStarted}
                   delay={1000}
                 />
-                <Link href="/pricing">
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="rounded-lg border border-gray-600 bg-gray-900/50 px-8 py-3 text-lg font-medium text-gray-300 transition-all hover:bg-gray-800 hover:border-gray-500"
-                  >
-                    View Pricing
-                  </motion.button>
-                </Link>
+                
               </div>
             </div>
 
             {/* Right content - 3D Robot */}
             <div className="flex-1 relative">
+              <Spotlight
+                className="top-0 left-0"
+                size={400}
+                fill="white"
+              />
               <SplineScene 
                 scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
                 className="w-full h-full"
@@ -144,7 +142,7 @@ export default function Home() {
         </motion.div>
 
         {/* Features Section - Hover Effects */}
-        <div className="mt-24">
+        <div className="mt-32">
           <motion.div 
             className="text-center"
             initial={{ opacity: 0, y: 20 }}
@@ -307,13 +305,13 @@ export default function Home() {
               <Link href="/pricing" className="text-gray-400 hover:text-white transition-colors">
                 Pricing
               </Link>
-              <Link href="/" className="text-gray-400 hover:text-white transition-colors">
-                Home
+              <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
+                About Us
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
                 Privacy
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
                 Terms
               </Link>
             </div>
