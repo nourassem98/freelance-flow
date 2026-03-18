@@ -28,7 +28,7 @@ const Sidebar = () => {
   ];
 
   const bottomItems = [
-    { icon: <Settings size={20} />, label: 'Settings' },
+    { icon: <Settings size={20} />, label: 'Settings', href: '/dashboard/settings' },
     { icon: <LogOut size={20} />, label: 'Logout' },
   ];
 
@@ -68,7 +68,7 @@ const Sidebar = () => {
         {bottomItems.map((item) => (
           <a
             key={item.label}
-            href="#"
+            href={item.href || '#'}
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-gray-800 hover:text-white"
           >
             {item.icon}
