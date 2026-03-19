@@ -108,48 +108,50 @@ const Navbar = () => {
                         }}
                       />
                       {/* Front-facing */}
-                      <motion.a
-                        href={item.href}
-                        className="relative z-10 bg-transparent text-muted-foreground rounded-xl px-3 py-2 block"
-                        variants={itemVariants}
-                        transition={sharedTransition}
-                        style={{
-                          transformStyle: "preserve-3d",
-                          transformOrigin: "center bottom"
-                        }}
-                      >
-                        <motion.span
-                          variants={{
-                            initial: { color: "rgb(113, 113, 122)" },
-                            hover: { color: "rgb(255, 255, 255)" }
+                      <Link href={item.href}>
+                        <motion.a
+                          className="relative z-10 bg-transparent text-muted-foreground rounded-xl px-3 py-2 block"
+                          variants={itemVariants}
+                          transition={sharedTransition}
+                          style={{
+                            transformStyle: "preserve-3d",
+                            transformOrigin: "center bottom"
                           }}
-                          transition={{ duration: 0.3 }}
                         >
-                          {item.name}
-                        </motion.span>
-                      </motion.a>
+                          <motion.span
+                            variants={{
+                              initial: { color: "rgb(113, 113, 122)" },
+                              hover: { color: "rgb(255, 255, 255)" }
+                            }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            {item.name}
+                          </motion.span>
+                        </motion.a>
+                      </Link>
                       {/* Back-facing */}
-                      <motion.a
-                        href={item.href}
-                        className="absolute inset-0 z-10 bg-transparent text-muted-foreground rounded-xl px-3 py-2"
-                        variants={backVariants}
-                        transition={sharedTransition}
-                        style={{
-                          transformStyle: "preserve-3d",
-                          transformOrigin: "center top",
-                          transform: "rotateX(90deg)"
-                        }}
-                      >
-                        <motion.span
-                          variants={{
-                            initial: { color: "rgb(113, 113, 122)" },
-                            hover: { color: "rgb(255, 255, 255)" }
+                      <Link href={item.href}>
+                        <motion.a
+                          className="absolute inset-0 z-10 bg-transparent text-muted-foreground rounded-xl px-3 py-2"
+                          variants={backVariants}
+                          transition={sharedTransition}
+                          style={{
+                            transformStyle: "preserve-3d",
+                            transformOrigin: "center top",
+                            transform: "rotateX(90deg)"
                           }}
-                          transition={{ duration: 0.3 }}
                         >
-                          {item.name}
-                        </motion.span>
-                      </motion.a>
+                          <motion.span
+                            variants={{
+                              initial: { color: "rgb(113, 113, 122)" },
+                              hover: { color: "rgb(255, 255, 255)" }
+                            }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            {item.name}
+                          </motion.span>
+                        </motion.a>
+                      </Link>
                     </motion.div>
                   </li>
                 ))}
