@@ -1,231 +1,293 @@
-"use client"
+'use client'
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import {
-  DollarSign,
-  TrendingUp,
-  ShoppingCart,
-  Users,
-  Package,
-  Bell,
-  User,
-  Moon,
-  Sun,
-  FolderKanban,
-} from "lucide-react";
-import DashboardSidebar from '@/components/DashboardSidebar';
+import { useState } from 'react'
+import { Plus, Pencil, Trash2, ChevronRight, ChevronLeft, DollarSign } from 'lucide-react'
+import { FormModal } from '@/components/FormModal'
+import { StatusBadge } from '@/components/StatusBadge'
+import { sampleDeals } from '@/lib/crm-data'
+import type { Deal, DealStage } from '@/lib/crm-types'
 
-const menuItems = [
-  { Icon: FolderKanban, title: 'Dashboard', href: '/dashboard' },
-  { Icon: DollarSign, title: 'Sales', href: '/dashboard/sales' },
-  { Icon: ShoppingCart, title: 'Products', href: '/dashboard/sales' },
-  { Icon: Users, title: 'Customers', href: '/dashboard/sales' },
-  { Icon: TrendingUp, title: 'Analytics', href: '/dashboard/analytics' },
-];
+const STAGES: DealStage[] = ['New Lead', 'Contacted', 'Negotiation', 'Won', 'Lost']
 
-const SalesPage = () => {
-  const router = useRouter();
-  const [isDark, setIsDark] = useState(false);
-  const [open, setOpen] = useState(true);
-  const [selected, setSelected] = useState("Sales");
+const stageBorder: Record<DealStage, string> = {
+  'New Lead':    'border-t-purple-500',
+  'Contacted':   'border-t-sky-500',
+  'Negotiation': 'border-t-orange-500',
+  'Won':         'border-t-green-500',
+  'Lost':        'border-t-red-500',
+}
 
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
+type FormState = { client: string; value: string; notes: string; stage: DealStage }
+const emptyForm: FormState = { client: '', value: '', notes: '', stage: 'New Lead' }
+
+export default function SalesPage() {
+  const [deals, setDeals] = useState<Deal[]>(sampleDeals)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editing, setEditing] = useState<Deal | null>(null)
+  const [form, setForm] = useState<FormState>(emptyForm)
+
+  const totalPipeline = deals
+    .filter((d) => d.stage !== 'Lost')
+    .reduce((s, d) => s + d.value, 0)
+  const totalWon = deals
+    .filter((d) => d.stage === 'Won')
+    .reduce((s, d) => s + d.value, 0)
+
+  const openCreate = () => {
+    setEditing(null)
+    setForm(emptyForm)
+    setModalOpen(true)
+  }
+
+  const openEdit = (deal: Deal) => {
+    setEditing(deal)
+    setForm({
+      client: deal.client,
+      value: String(deal.value),
+      notes: deal.notes,
+      stage: deal.stage,
+    })
+    setModalOpen(true)
+  }
+
+  const handleSave = () => {
+    if (!form.client) return
+    if (editing) {
+      setDeals((prev) =>
+        prev.map((d) =>
+          d.id === editing.id
+            ? {
+                ...d,
+                client: form.client,
+                value: parseFloat(form.value) || 0,
+                notes: form.notes,
+                stage: form.stage,
+              }
+            : d
+        )
+      )
     } else {
-      document.documentElement.classList.remove('dark');
+      setDeals((prev) => [
+        ...prev,
+        {
+          id: `d${Date.now()}`,
+          client: form.client,
+          value: parseFloat(form.value) || 0,
+          notes: form.notes,
+          stage: form.stage,
+          createdAt: new Date().toISOString().slice(0, 10),
+        },
+      ])
     }
-  }, [isDark]);
+    setModalOpen(false)
+  }
 
-  const handleNavigate = (page: string) => {
-    const menuItem = menuItems.find(item => item.title === page);
-    if (menuItem?.href) {
-      setSelected(page);
-      router.push(menuItem.href);
-    } else {
-      setSelected(page);
-    }
-  };
+  const moveStage = (deal: Deal, dir: 1 | -1) => {
+    const idx = STAGES.indexOf(deal.stage)
+    const next = STAGES[idx + dir]
+    if (next)
+      setDeals((prev) => prev.map((d) => (d.id === deal.id ? { ...d, stage: next } : d)))
+  }
 
-  const Header = ({ isDark, setIsDark }: { isDark: boolean; setIsDark: (isDark: boolean) => void }) => {
-    return (
-      <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Sales Dashboard</h2>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="relative p-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
-            </button>
-            <button
-              onClick={() => setIsDark(!isDark)}
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-            >
-              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
-            <button className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
-              <User className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      </header>
-    );
-  };
+  const deleteDeal = (id: string) => setDeals((prev) => prev.filter((d) => d.id !== id))
 
-  const StatCard = ({ title, value, change, trend, icon, color }: {
-    title: string;
-    value: string;
-    change: string;
-    trend: 'up' | 'down';
-    icon: React.ReactNode;
-    color: string;
-  }) => {
-    const colorClasses = {
-      blue: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
-      green: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400',
-      purple: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
-      orange: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400',
-    };
-
-    return (
-      <div className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
-        <div className="flex items-center justify-between mb-4">
-          <div className={`p-2 rounded-lg ${colorClasses[color as keyof typeof colorClasses]}`}>
-            {icon}
-          </div>
-          <span className={`text-sm font-medium ${trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-            {trend === 'up' ? '↑' : '↓'} {change.split(' ')[0]}
-          </span>
-        </div>
-        <h3 className="font-medium text-gray-600 dark:text-gray-400 mb-1">{title}</h3>
-        <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{change}</p>
-      </div>
-    );
-  };
+  const field =
+    'w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500'
 
   return (
-    <div className={`flex min-h-screen w-full ${isDark ? 'dark' : ''}`}>
-      <div className="flex w-full bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
-        <DashboardSidebar
-          open={open}
-          setOpen={setOpen}
-          selected={selected}
-          setSelected={handleNavigate}
-          menuItems={menuItems}
-        />
-        
-        <div className="flex-1">
-          <Header isDark={isDark} setIsDark={setIsDark} />
-          
-          <main className="p-6">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Sales</h1>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                Track and manage your sales, revenue, and customer relationships.
-              </p>
+    <>
+      {/* Page header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Sales Pipeline
+          </h1>
+          <p className="mt-1 text-gray-600 dark:text-gray-400">
+            Track leads and deals through your pipeline.
+          </p>
+        </div>
+        <button
+          onClick={openCreate}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="h-4 w-4" /> New Deal
+        </button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {[
+          { label: 'Total Deals',    value: deals.length,                   color: 'text-blue-600 dark:text-blue-400' },
+          { label: 'Pipeline Value', value: `$${totalPipeline.toLocaleString()}`, color: 'text-purple-600 dark:text-purple-400' },
+          { label: 'Revenue Won',    value: `$${totalWon.toLocaleString()}`, color: 'text-green-600 dark:text-green-400' },
+        ].map((s) => (
+          <div
+            key={s.label}
+            className="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <DollarSign className={`h-5 w-5 ${s.color}`} />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                {s.label}
+              </span>
             </div>
+            <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+          </div>
+        ))}
+      </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <StatCard
-                title="Total Revenue"
-                value="$45,231"
-                change="+20.1% from last month"
-                trend="up"
-                icon={<DollarSign className="h-5 w-5" />}
-                color="blue"
-              />
-              <StatCard
-                title="Orders"
-                value="1,234"
-                change="+12% from last week"
-                trend="up"
-                icon={<ShoppingCart className="h-5 w-5" />}
-                color="green"
-              />
-              <StatCard
-                title="Customers"
-                value="567"
-                change="+8% from last month"
-                trend="up"
-                icon={<Users className="h-5 w-5" />}
-                color="purple"
-              />
-              <StatCard
-                title="Conversion Rate"
-                value="3.2%"
-                change="-0.5% from last week"
-                trend="down"
-                icon={<TrendingUp className="h-5 w-5" />}
-                color="orange"
-              />
-            </div>
+      {/* Kanban board */}
+      <div className="flex gap-4 overflow-x-auto pb-4">
+        {STAGES.map((stage) => {
+          const stageDeals = deals.filter((d) => d.stage === stage)
+          return (
+            <div key={stage} className="flex-shrink-0 w-64">
+              <div
+                className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 border-t-4 ${stageBorder[stage]} shadow-sm`}
+              >
+                <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100">
+                      {stage}
+                    </h3>
+                    <span className="text-xs text-gray-500">
+                      {stageDeals.length} deal{stageDeals.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <StatusBadge status={stage} showIcon={false} />
+                </div>
 
-            <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm mb-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Sales</h2>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                  View All
-                </button>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200 dark:border-gray-800">
-                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Order ID</th>
-                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Customer</th>
-                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Amount</th>
-                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Status</th>
-                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { id: '#ORD-001', customer: 'Acme Corp', amount: '$2,500', status: 'Completed', date: 'Mar 15, 2026' },
-                      { id: '#ORD-002', customer: 'TechStart Inc', amount: '$1,800', status: 'Processing', date: 'Mar 14, 2026' },
-                      { id: '#ORD-003', customer: 'Global Solutions', amount: '$3,200', status: 'Completed', date: 'Mar 13, 2026' },
-                      { id: '#ORD-004', customer: 'StartupXYZ', amount: '$950', status: 'Pending', date: 'Mar 12, 2026' },
-                      { id: '#ORD-005', customer: 'Innovation Labs', amount: '$4,500', status: 'Completed', date: 'Mar 11, 2026' },
-                    ].map((order, i) => (
-                      <tr key={i} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <td className="py-4 px-4 font-mono text-sm text-gray-900 dark:text-gray-100">{order.id}</td>
-                        <td className="py-4 px-4 text-sm text-gray-600 dark:text-gray-400">{order.customer}</td>
-                        <td className="py-4 px-4 text-sm font-semibold text-gray-900 dark:text-gray-100">{order.amount}</td>
-                        <td className="py-4 px-4">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            order.status === 'Completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' :
-                            order.status === 'Processing' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
-                            'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
-                          }`}>
-                            {order.status}
-                          </span>
-                        </td>
-                        <td className="py-4 px-4 text-sm text-gray-600 dark:text-gray-400">{order.date}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Sales Overview</h2>
-              <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
-                <div className="text-center">
-                  <Package className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-500 dark:text-gray-400">Sales chart will be displayed here</p>
+                <div className="p-3 space-y-3 min-h-32">
+                  {stageDeals.map((deal) => (
+                    <div
+                      key={deal.id}
+                      className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
+                    >
+                      <p className="font-medium text-sm text-gray-900 dark:text-gray-100">
+                        {deal.client}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
+                        {deal.notes}
+                      </p>
+                      <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 mt-2">
+                        ${deal.value.toLocaleString()}
+                      </p>
+                      <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => moveStage(deal, -1)}
+                            disabled={STAGES.indexOf(deal.stage) === 0}
+                            className="p-1 rounded text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-30 transition-colors"
+                            title="Move back"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => moveStage(deal, 1)}
+                            disabled={STAGES.indexOf(deal.stage) === STAGES.length - 1}
+                            className="p-1 rounded text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-30 transition-colors"
+                            title="Move forward"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </button>
+                        </div>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => openEdit(deal)}
+                            className="p-1 rounded text-gray-400 hover:text-blue-600 transition-colors"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => deleteDeal(deal.id)}
+                            className="p-1 rounded text-gray-400 hover:text-red-600 transition-colors"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-          </main>
-        </div>
+          )
+        })}
       </div>
-    </div>
-  );
-};
 
-export default SalesPage;
+      {/* Modal */}
+      <FormModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={editing ? 'Edit Deal' : 'New Deal'}
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Client Name
+            </label>
+            <input
+              className={field}
+              value={form.client}
+              onChange={(e) => setForm((f) => ({ ...f, client: e.target.value }))}
+              placeholder="e.g. Acme Corp"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Deal Value ($)
+            </label>
+            <input
+              type="number"
+              className={field}
+              value={form.value}
+              onChange={(e) => setForm((f) => ({ ...f, value: e.target.value }))}
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Stage
+            </label>
+            <select
+              className={field}
+              value={form.stage}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, stage: e.target.value as DealStage }))
+              }
+            >
+              {STAGES.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Notes
+            </label>
+            <textarea
+              className={`${field} resize-none h-24`}
+              value={form.notes}
+              onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+              placeholder="Add notes about this deal..."
+            />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button
+              onClick={() => setModalOpen(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              {editing ? 'Save Changes' : 'Add Deal'}
+            </button>
+          </div>
+        </div>
+      </FormModal>
+    </>
+  )
+}
