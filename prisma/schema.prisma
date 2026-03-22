@@ -1,0 +1,268 @@
+// ─────────────────────────────────────────────────────────────
+// Freelance Flow — Prisma Schema
+// Run: npx prisma migrate dev --name init
+// ─────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Auth (Clerk user ID as external reference) ───────────────
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  plan      String   @default("free") // free | pro | enterprise
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contacts    Contact[]
+  invoices    Invoice[]
+  deals       Deal[]
+  projects    Project[]
+  timeEntries TimeEntry[]
+  proposals   Proposal[]
+  services    Service[]
+  automations Automation[]
+}
+
+// ── Contacts / CRM ───────────────────────────────────────────
+model Contact {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  email        String
+  phone        String?
+  company      String?
+  status       String   @default("Lead") // Active | Inactive | Lead
+  source       String?
+  notes        String?
+  address      String?
+  website      String?
+  totalRevenue Float    @default(0)
+  lastContact  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tags         ContactTag[]
+  timeline     TimelineEvent[]
+  invoices     Invoice[]
+  deals        Deal[]
+  projects     Project[]
+  timeEntries  TimeEntry[]
+  proposals    Proposal[]
+
+  @@index([userId])
+  @@index([email])
+}
+
+model ContactTag {
+  id        String  @id @default(cuid())
+  contactId String
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  name      String
+
+  @@unique([contactId, name])
+}
+
+model TimelineEvent {
+  id          String   @id @default(cuid())
+  contactId   String
+  contact     Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  type        String   // note | email | call | meeting | invoice | deal | proposal
+  title       String
+  description String?
+  metadata    Json?
+  date        DateTime @default(now())
+
+  @@index([contactId])
+}
+
+// ── Invoicing ────────────────────────────────────────────────
+model Invoice {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contactId String?
+  contact   Contact? @relation(fields: [contactId], references: [id])
+  client    String
+  amount    Float
+  status    String   @default("Draft") // Draft | Pending | Paid | Overdue
+  issueDate DateTime @default(now())
+  dueDate   DateTime
+  notes     String?
+
+  items     InvoiceLineItem[]
+
+  fromProposalId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model InvoiceLineItem {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  qty         Float   @default(1)
+  unitPrice   Float
+}
+
+// ── Deals / Pipeline ─────────────────────────────────────────
+model Deal {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contactId         String?
+  contact           Contact?  @relation(fields: [contactId], references: [id])
+  client            String
+  value             Float
+  stage             String    @default("New Lead")
+  probability       Int       @default(20)
+  notes             String?
+  expectedCloseDate DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([stage])
+}
+
+// ── Projects & Tasks ──────────────────────────────────────────
+model Project {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contactId   String?
+  contact     Contact?  @relation(fields: [contactId], references: [id])
+  name        String
+  client      String
+  status      String    @default("Active") // Active | Completed | On Hold
+  deadline    DateTime
+  budget      Float?
+  hourlyRate  Float?
+  fromDealId  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tasks       Task[]
+  timeEntries TimeEntry[]
+
+  @@index([userId])
+}
+
+model Task {
+  id             String   @id @default(cuid())
+  projectId      String
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title          String
+  status         String   @default("Todo") // Todo | In Progress | Done
+  priority       String   @default("Medium") // Low | Medium | High
+  assignee       String?
+  dueDate        DateTime?
+  estimatedHours Float?
+  createdAt      DateTime @default(now())
+
+  @@index([projectId])
+}
+
+// ── Time Tracking ─────────────────────────────────────────────
+model TimeEntry {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId   String?
+  project     Project?  @relation(fields: [projectId], references: [id])
+  contactId   String?
+  contact     Contact?  @relation(fields: [contactId], references: [id])
+  description String
+  date        DateTime  @default(now())
+  duration    Int       // minutes
+  billable    Boolean   @default(true)
+  hourlyRate  Float     @default(0)
+  billed      Boolean   @default(false)
+  invoiceId   String?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([projectId])
+}
+
+// ── Proposals ────────────────────────────────────────────────
+model Proposal {
+  id          String    @id @default(cuid())
+  userId      String
+  contactId   String?
+  contact     Contact?  @relation(fields: [contactId], references: [id])
+  title       String
+  clientName  String
+  status      String    @default("Draft")
+  total       Float
+  validUntil  DateTime
+  notes       String?
+  terms       String?
+  templateId  String?
+  sentAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  items       ProposalItem[]
+
+  convertedToProjectId String?
+  convertedToInvoiceId String?
+
+  @@index([userId])
+}
+
+model ProposalItem {
+  id          String   @id @default(cuid())
+  proposalId  String
+  proposal    Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  description String
+  qty         Float    @default(1)
+  unitPrice   Float
+}
+
+// ── Service Catalog ───────────────────────────────────────────
+model Service {
+  id             String  @id @default(cuid())
+  userId         String
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  category       String
+  description    String
+  defaultPrice   Float
+  priceType      String  @default("fixed") // fixed | hourly | monthly
+  estimatedHours Float?
+  active         Boolean @default(true)
+
+  @@index([userId])
+}
+
+// ── Automations ───────────────────────────────────────────────
+model Automation {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  trigger     String
+  conditions  Json      @default("[]")
+  actions     Json      @default("[]")
+  enabled     Boolean   @default(true)
+  runCount    Int       @default(0)
+  lastRun     DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+}

@@ -8,6 +8,7 @@ interface MenuItem {
   title: string;
   href?: string;
   notifs?: number;
+  group?: string;
 }
 
 interface OptionProps {
@@ -40,7 +41,16 @@ interface DashboardSidebarProps {
   userEmail: string;
 }
 
+const GROUP_LABELS: Record<string, string> = {
+  crm: 'CRM',
+  work: 'Work',
+  tools: 'Tools',
+  automation: 'More',
+};
+
 const DashboardSidebar = ({ open, setOpen, selected, setSelected, menuItems, userName, userEmail }: DashboardSidebarProps) => {
+  const seenGroups = new Set<string>();
+
   return (
     <nav
       className={`sticky top-0 h-screen shrink-0 border-r transition-all duration-300 ease-in-out ${
@@ -49,18 +59,30 @@ const DashboardSidebar = ({ open, setOpen, selected, setSelected, menuItems, use
     >
       <TitleSection open={open} userName={userName} userEmail={userEmail} />
 
-      <div className="space-y-1 mb-8">
-        {menuItems.map((item, index) => (
-          <Option
-            key={index}
-            Icon={item.Icon}
-            title={item.title}
-            selected={selected}
-            setSelected={setSelected}
-            open={open}
-            notifs={item.notifs}
-          />
-        ))}
+      <div className="space-y-0 mb-8">
+        {menuItems.map((item, index) => {
+          const group = item.group ?? '';
+          const showLabel = open && group && group !== 'main' && !seenGroups.has(group);
+          if (group) seenGroups.add(group);
+
+          return (
+            <React.Fragment key={index}>
+              {showLabel && (
+                <div className="px-3 pt-4 pb-1 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                  {GROUP_LABELS[group] ?? group}
+                </div>
+              )}
+              <Option
+                Icon={item.Icon}
+                title={item.title}
+                selected={selected}
+                setSelected={setSelected}
+                open={open}
+                notifs={item.notifs}
+              />
+            </React.Fragment>
+          );
+        })}
       </div>
 
       <ToggleClose open={open} setOpen={setOpen} />
@@ -70,20 +92,20 @@ const DashboardSidebar = ({ open, setOpen, selected, setSelected, menuItems, use
 
 const Option = ({ Icon, title, selected, setSelected, open, notifs }: OptionProps) => {
   const isSelected = selected === title;
-  
+
   return (
     <button
       onClick={() => setSelected(title)}
       className={`relative flex h-11 w-full items-center rounded-md transition-all duration-200 ${
-        isSelected 
-          ? "bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 shadow-sm border-l-2 border-blue-500" 
+        isSelected
+          ? "bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 shadow-sm border-l-2 border-blue-500"
           : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200"
       }`}
     >
       <div className="grid h-full w-12 place-content-center">
         <Icon className="h-4 w-4" />
       </div>
-      
+
       {open && (
         <span className="text-sm font-medium transition-opacity duration-200">
           {title}
