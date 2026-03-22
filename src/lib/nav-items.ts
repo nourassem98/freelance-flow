@@ -7,7 +7,6 @@ import {
   BarChart3,
   Sparkles,
   Users,
-  Monitor,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -27,5 +26,5 @@ export const navItems: NavItem[] = [
   { Icon: BarChart3,       title: 'Analytics', href: '/dashboard/analytics' },
   { Icon: Sparkles,        title: 'AI Agent',  href: '/dashboard/ai-agent' },
   { Icon: Users,           title: 'Members',   href: '/dashboard/members' },
-  { Icon: Monitor,         title: 'View Site', href: '/' },
+
 ]

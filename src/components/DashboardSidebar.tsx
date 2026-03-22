@@ -1,15 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import {
-  ChevronDown,
-  ChevronsRight,
-  Moon,
-  Sun,
-  LucideIcon,
-} from 'lucide-react';
+import { ChevronsRight, LucideIcon } from 'lucide-react';
 
 interface MenuItem {
   Icon: LucideIcon;
@@ -29,6 +21,8 @@ interface OptionProps {
 
 interface TitleSectionProps {
   open: boolean;
+  userName: string;
+  userEmail: string;
 }
 
 interface ToggleCloseProps {
@@ -42,16 +36,18 @@ interface DashboardSidebarProps {
   selected: string;
   setSelected: (title: string) => void;
   menuItems: MenuItem[];
+  userName: string;
+  userEmail: string;
 }
 
-const DashboardSidebar = ({ open, setOpen, selected, setSelected, menuItems }: DashboardSidebarProps) => {
+const DashboardSidebar = ({ open, setOpen, selected, setSelected, menuItems, userName, userEmail }: DashboardSidebarProps) => {
   return (
     <nav
       className={`sticky top-0 h-screen shrink-0 border-r transition-all duration-300 ease-in-out ${
         open ? 'w-64' : 'w-16'
       } border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-2 shadow-sm`}
     >
-      <TitleSection open={open} />
+      <TitleSection open={open} userName={userName} userEmail={userEmail} />
 
       <div className="space-y-1 mb-8">
         {menuItems.map((item, index) => (
@@ -103,28 +99,21 @@ const Option = ({ Icon, title, selected, setSelected, open, notifs }: OptionProp
   );
 };
 
-const TitleSection = ({ open }: TitleSectionProps) => {
+const TitleSection = ({ open, userName, userEmail }: TitleSectionProps) => {
   return (
     <div className="mb-6 border-b border-gray-200 dark:border-gray-800 pb-4">
-      <div className="flex cursor-pointer items-center justify-between rounded-md p-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800">
-        <div className="flex items-center gap-3">
-          <Logo />
-          {open && (
-            <div className="transition-opacity duration-200">
-              <div className="flex items-center gap-2">
-                <div>
-                  <span className="block text-sm font-semibold text-gray-900 dark:text-gray-100">
-                    Freelance Flow
-                  </span>
-                  <span className="block text-xs text-gray-500 dark:text-gray-400">
-                    Pro Plan
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-        {open && <ChevronDown className="h-4 w-4 text-gray-400 dark:text-gray-500" />}
+      <div className="flex items-center gap-3 p-2">
+        <Logo />
+        {open && (
+          <div className="transition-opacity duration-200 min-w-0">
+            <span className="block text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+              {userName}
+            </span>
+            <span className="block text-xs text-gray-500 dark:text-gray-400 truncate">
+              {userEmail}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

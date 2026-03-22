@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { SignInButton, useClerk } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Users, Layers, CreditCard, Shield, Sparkles, Globe, Zap, Lock } from 'lucide-react';
@@ -18,7 +17,6 @@ import AnimatedGenerateButton from '../../components/ui/animated-generate-button
 
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const { openSignIn } = useClerk();
   const router = useRouter();
   
   useEffect(() => {
@@ -26,7 +24,7 @@ export default function Home() {
   }, []);
 
   const handleSignIn = () => {
-    openSignIn();
+    router.push('/pricing');
   };
 
   const handleGetStarted = () => {
